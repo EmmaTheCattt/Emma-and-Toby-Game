@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Player_movement : MonoBehaviour
 {
@@ -24,10 +25,10 @@ public class Player_movement : MonoBehaviour
     public Vector3 Movement;
 
     //Keys
-    public bool right;
-    public bool left;
-    public bool up;
-    public bool down;
+    public bool Right;
+    public bool Left;
+    public bool Up;
+    public bool Down;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -38,34 +39,32 @@ public class Player_movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        up = Input.GetKey(KeyCode.W);
-        down = Input.GetKey(KeyCode.S);
-        left = Input.GetKey(KeyCode.A);
-        right = Input.GetKey(KeyCode.D);
+        Up = Input.GetKey(KeyCode.W);
+        Down = Input.GetKey(KeyCode.S);
+        Left = Input.GetKey(KeyCode.A);
+        Right = Input.GetKey(KeyCode.D);
 
-        if (up)
+        if (Up)
         {
             y_value = 1;
         }
 
-        if (down)
+        if (Down)
         {
             y_value = -1;
         }
 
-        if (right)
+        if (Right)
         {
             x_value = 1;
         }
 
-        if (left)
+        if (Left)
         {
             x_value = -1;
         }
 
         Movement = new Vector3 (x_value, y_value, 0);
-        x_value = 0;
-        y_value = 0;
     }
 
     private void FixedUpdate()
@@ -74,31 +73,84 @@ public class Player_movement : MonoBehaviour
         {
             transform.position += Movement.normalized * speed * Time.fixedDeltaTime;
         }
+
+        x_value = 0;
+        y_value = 0;
     }
 
     public bool DetectWall(Vector3 move)
     {
+        
         RaycastHit2D hit = Physics2D.Raycast(transform.position, move, player_size);
-
-        distance_y = player_size + 1;
-        distance_x = player_size + 1;
-        distance   = player_size + 1;
+        Debug.DrawRay(transform.position, move, Color.lightPink);
 
         if (hit)
         {
-            distance_y = Mathf.Abs(hit.point.y - transform.position.y);
-            distance_x = Mathf.Abs(hit.point.x - transform.position.x);
-
-            distance = new Vector2(distance_x, distance_y).magnitude;
+            if (hit.distance <= player_size)
+            {
+                return false;
+            }
         }
-        else
+        
+
+        if (x_value != 0)
         {
-            return true;
+            for (int i = 0; i < 3; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        hit = Physics2D.Raycast(transform.position, new Vector2(x_value, 0), player_size);
+                        Debug.DrawRay(transform.position, new Vector2(x_value, 0), Color.lightPink);
+                        break;
+                    case 1:
+                        hit = Physics2D.Raycast(transform.position, new Vector2(x_value, 1).normalized, player_size);
+                        Debug.DrawRay(transform.position, new Vector2(x_value, 1).normalized, Color.lightPink);
+                        break;
+                    case 2:
+                        hit = Physics2D.Raycast(transform.position, new Vector2(x_value, -1).normalized, player_size);
+                        Debug.DrawRay(transform.position, new Vector2(x_value, -1).normalized, Color.lightPink);
+                        break;
+                }
+
+                if (hit)
+                {
+                    if (hit.distance <= player_size)
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
-        if (distance < player_size)
+        if (y_value != 0)
         {
-            return false;
+            for (int i = 0; i < 3; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        hit = Physics2D.Raycast(transform.position, new Vector2(0, y_value), player_size);
+                        Debug.DrawRay(transform.position, new Vector2(0, y_value), Color.lightPink);
+                        break;
+                    case 1:
+                        hit = Physics2D.Raycast(transform.position, new Vector2(1, y_value).normalized, player_size);
+                        Debug.DrawRay(transform.position, new Vector2(1, y_value).normalized, Color.lightPink);
+                        break;
+                    case 2:
+                        hit = Physics2D.Raycast(transform.position, new Vector2(-1, y_value).normalized, player_size);
+                        Debug.DrawRay(transform.position, new Vector2(-1, y_value).normalized, Color.lightPink);
+                        break;
+                }
+
+                if (hit)
+                {
+                    if (hit.distance <= player_size)
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
         return true;
