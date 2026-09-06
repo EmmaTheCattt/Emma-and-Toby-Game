@@ -6,8 +6,14 @@ public class Player_movement : MonoBehaviour
     public GameObject Player;
 
     public Transform Player_trans;
+    public float player_size;
 
     public float speed;
+
+    public float distance_y;
+    public float distance_x;
+
+    public float distance;
 
     public float x;
     public float y;
@@ -64,6 +70,37 @@ public class Player_movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position += Movement.normalized * speed * Time.fixedDeltaTime;
+        if (DetectWall(Movement.normalized))
+        {
+            transform.position += Movement.normalized * speed * Time.fixedDeltaTime;
+        }
+    }
+
+    public bool DetectWall(Vector3 move)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, move, player_size);
+
+        distance_y = player_size + 1;
+        distance_x = player_size + 1;
+        distance   = player_size + 1;
+
+        if (hit)
+        {
+            distance_y = Mathf.Abs(hit.point.y - transform.position.y);
+            distance_x = Mathf.Abs(hit.point.x - transform.position.x);
+
+            distance = new Vector2(distance_x, distance_y).magnitude;
+        }
+        else
+        {
+            return true;
+        }
+
+        if (distance < player_size)
+        {
+            return false;
+        }
+
+        return true;
     }
 }
