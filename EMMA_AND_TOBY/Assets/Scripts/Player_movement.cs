@@ -64,6 +64,6 @@ public class Player_movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        transform.position += Movement * speed * Time.fixedDeltaTime;
+        transform.position += Movement.normalized * speed * Time.fixedDeltaTime;
     }
 }

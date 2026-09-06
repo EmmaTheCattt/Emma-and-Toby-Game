@@ -465,7 +465,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player_movement
   Player: {fileID: 0}
   Player_trans: {fileID: 0}
-  speed: 0
+  speed: 2
   x: 0
   y: 0
   y_value: 0
